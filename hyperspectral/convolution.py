@@ -15,11 +15,16 @@ def clear_directory(directory):
             item.unlink()
 
 def hyperion(spectra, Bands):
-    """Hyperion convolution""" 
+    """
+    Hyperion convolution function.
+
+    Args:
+        spectra (pd.DataFrame): Hyperspectral reflectance data.
+        Bands (pd.DataFrame): Spectral response functions (SRFs).
+    """
     cwd = Path.cwd()
     bands_Dir = cwd / "bands"
     convolved_Dir = cwd / "convolved"
-    file_name = file_name
 
     # Create or clear the bands directory
     if bands_Dir.exists():
