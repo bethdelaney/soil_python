@@ -6,6 +6,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         'numpy',
+        'pandas',
         'scipy',
         'scikit-learn',
         'rasterio',
@@ -13,7 +14,7 @@ setup(
     ],
     author='Beth Delaney',
     author_email='beth_delaney@outlook.com',
-    description='Python implementation of the Puchwein algorithm for selecting calibration samples',
+    description='Python implementation of various soil spectral applications',
     url='https://github.com/bethdelaney/soil-python.git',
     classifiers=[
         'Programming Language :: Python :: 3',
