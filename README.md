@@ -4,6 +4,7 @@ This repository is dedicated to developing and implementing various soil remote 
 The repository will evolve over time, incorporating new methods and analysis techniques as they are developed or adapted.
 
 Current Implementations:
+
 **Sampling:**
 The Puchwein algorithm (Puchwein 1988) is implemented to select representative samples from a dataset based on Mahalanobis distance. This algorithm is particularly useful for soil spectral analysis, allowing the identification of the most dissimilar samples in a multivariate space, reducing redundancy in data, and optimising model performance.
 
