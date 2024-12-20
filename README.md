@@ -3,9 +3,12 @@ This repository is dedicated to developing and implementing various soil remote 
 
 The repository will evolve over time, incorporating new methods and analysis techniques as they are developed or adapted.
 
-Current Implementations
-1. Puchwein Algorithm:
+Current Implementations:
+**Sampling:**
 The Puchwein algorithm (Puchwein 1988) is implemented to select representative samples from a dataset based on Mahalanobis distance. This algorithm is particularly useful for soil spectral analysis, allowing the identification of the most dissimilar samples in a multivariate space, reducing redundancy in data, and optimising model performance.
+
+**Hyperspectral**
+Convolution from laboratory hyperspectral data to various satellite sensor central wavelengths. Currently only Hyperion is applied.
 
 This algorithm can also be employed as a feature-based sampling strategy to determine the best locations for soil sampling on remote sensing spectral data. By analysing the spectral features from satellite imagery, the algorithm selects points that are most representative and dissimilar, ensuring that soil samples capture the full variability of the landscape.
 
