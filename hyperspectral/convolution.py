@@ -6,13 +6,13 @@ def convolve_to_hyperion(lab_data, reflectance_prefix="spc.", srf_bandwidth=10, 
     """
     Convolves lab hyperspectral data to Hyperion bands using spectral response functions (SRFs).
     Automatically generates Hyperion SRFs from a provided wavelength file.
-    Reflectance data MUST be in columns with prefix "spc." to be recognised. E.g., spc.400, spc.401...
+    Reflectance data MUST be in columns with prefix so that they can be recognised. E.g., reflectance_prefix="spc." for spc.400, spc.401...
     
     Parameters:
-        lab_data (pd.DataFrame): Lab data with reflectance columns (starting with 'spc.<wavelength>').
-        reflectance_prefix (str): Prefix for reflectance columns.
-        srf_bandwidth (float): Assumed full-width half-maximum (FWHM) for each band (in nm).
-        srf_file_path (str): Path to the Hyperion wavelength CSV file.
+        lab_data (pd.DataFrame): Lab data with reflectance columns (e.g., starting with 'spc.<wavelength>').
+        reflectance_prefix (str): Prefix for reflectance columns. Default is "spc." based on LUCAS database.
+        srf_bandwidth (float): Assumed full-width half-maximum (FWHM) for each band (in nm). Default is 10.
+        srf_file_path (str): Path to the Hyperion wavelength CSV file within GitHub.
 
     Returns:
         pd.DataFrame: Convolved data with retained metadata and Hyperion bands.
