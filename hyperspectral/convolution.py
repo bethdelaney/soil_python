@@ -1,63 +1,58 @@
-"""Functions to convolve hyperspectral data to the equivalent bands of a selection of common satellite based sensors"""
-
-import numpy as np
 import pandas as pd
+import numpy as np
+import os
 
-def create_hyperion_srf(hyperion_wavelengths, bandwidth=10):
-    """
-    Creates a spectral response function (SRF) for Hyperion bands.
-    
-    Parameters:
-        hyperion_wavelengths (pd.DataFrame): DataFrame with 'Name' and 'Wavelength' columns.
-        bandwidth (float): Assumed full-width half-maximum (FWHM) for each band (in nm).
-        
-    Returns:
-        dict: Dictionary with band names as keys and (wavelength_range, response) tuples as values.
-    """
-    srf = {}
-    for _, row in hyperion_wavelengths.iterrows():
-        center = row['Wavelength']
-        name = row['Name']
-        # Simulate a Gaussian-like SRF (simple boxcar here for demonstration)
-        band_range = (center - bandwidth / 2, center + bandwidth / 2)
-        wavelengths = np.linspace(band_range[0], band_range[1], 100)
-        response = np.ones_like(wavelengths)  # Flat response within band range
-        srf[name] = (wavelengths, response)
-    return srf
-
-def convolve_to_hyperion(lab_data, hyperion_srf, reflectance_prefix="spc."):
+def convolve_to_hyperion(lab_data, reflectance_prefix="spc.", srf_bandwidth=10, srf_file_path="hyperspectral/hyperion_wavelengths.csv"):
     """
     Convolves lab hyperspectral data to Hyperion bands using spectral response functions (SRFs).
-
+    Automatically generates Hyperion SRFs from a provided wavelength file.
+    Reflectance data MUST be in columns with prefix "spc." to be recognised. E.g., spc.400, spc.401...
+    
     Parameters:
         lab_data (pd.DataFrame): Lab data with reflectance columns (starting with 'spc.<wavelength>').
-        hyperion_srf (dict): Dictionary with Hyperion band SRFs. Keys are band names,
-                             values are tuples (wavelength_range, response).
         reflectance_prefix (str): Prefix for reflectance columns.
+        srf_bandwidth (float): Assumed full-width half-maximum (FWHM) for each band (in nm).
+        srf_file_path (str): Path to the Hyperion wavelength CSV file.
 
     Returns:
         pd.DataFrame: Convolved data with retained metadata and Hyperion bands.
     """
-    # Retain metadata
-    metadata_columns = ["Point_ID", "X", "Y", "OC"]
+    # Step 1: Load Hyperion Wavelengths
+    if not os.path.exists(srf_file_path):
+        raise FileNotFoundError(f"Hyperion wavelength file not found at {srf_file_path}")
+    hyperion_wavelengths = pd.read_csv(srf_file_path)
+
+    # Step 2: Create Hyperion SRFs
+    hyperion_srf = {}
+    for _, row in hyperion_wavelengths.iterrows():
+        center = row['Wavelength']
+        name = f"{row['Name']} - {center:.2f}"  # Include central wavelength in band name
+        band_range = (center - srf_bandwidth / 2, center + srf_bandwidth / 2)
+        wavelengths = np.linspace(band_range[0], band_range[1], 100)
+        response = np.ones_like(wavelengths)  # Flat response
+        hyperion_srf[name] = (wavelengths, response)
+
+    # Step 3: Retain Metadata
+    reflectance_columns = [col for col in lab_data.columns if col.startswith(reflectance_prefix)]
+    metadata_columns = [col for col in lab_data.columns if col not in reflectance_columns]
     metadata = lab_data[metadata_columns]
 
-    # Extract wavelengths and reflectance data
-    reflectance_columns = [col for col in lab_data.columns if col.startswith(reflectance_prefix)]
+    # Step 4: Extract Wavelengths and Reflectance Data
     wavelengths = np.array([float(col.replace(reflectance_prefix, "")) for col in reflectance_columns])
     reflectances = lab_data[reflectance_columns].values
 
-    # Initialise dictionary for convolved data
+    # Step 5: Perform Convolution
     convolved_data = {}
-
     for band, (band_wavelengths, band_responses) in hyperion_srf.items():
-        # Interpolate SRF to match hyperspectral wavelengths
         interpolated_srf = np.interp(wavelengths, band_wavelengths, band_responses, left=0, right=0)
-        # Calculate weighted average for each sample
         band_values = np.sum(reflectances * interpolated_srf, axis=1) / np.sum(interpolated_srf)
         convolved_data[band] = band_values
 
-    # Combine metadata and convolved bands
+    # Step 6: Combine Results
     convolved_df = pd.concat([metadata, pd.DataFrame(convolved_data)], axis=1)
     return convolved_df
-    
+
+# Example usage:
+# lab_data = pd.read_csv('path_to_your_lab_data.csv')  # Your lab data
+# convolved_data = convolve_to_hyperion(lab_data)
+# convolved_data.to_csv('convolved_lab_data.csv', index=False)
