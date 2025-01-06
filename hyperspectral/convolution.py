@@ -57,16 +57,16 @@ def convolve_to_hyperion(lab_data, reflectance_prefix="spc.", srf_bandwidth=10, 
 # convolved_data = convolve_to_hyperion(lab_data)
 # convolved_data.to_csv('convolved_lab_data.csv', index=False)
 
-def convolve_to_enmap(lab_data, reflectance_prefix="spc.", srf_bandwidth=10, srf_file_path="hyperspectral/enmap_wavelengths.csv"):
+def convolve_to_enmap(lab_data, reflectance_prefix="spc.", srf_file_path="hyperspectral/enmap_wavelengths.csv"):
     """
     Convolves lab hyperspectral data to EnMAP bands using spectral response functions (SRFs).
-    Automatically generates EnMAP SRFs from a provided wavelength file.
+    Automatically generates EnMAP SRFs using FWHM from a provided wavelength file.
+    Reflectance data MUST be in columns with prefix so that they can be recognised. E.g., reflectance_prefix="spc." for spc.400, spc.401...
 
     Parameters:
-        lab_data (pd.DataFrame): Lab data with reflectance columns (e.g., starting with 'spc.<wavelength>').
-        reflectance_prefix (str): Prefix for reflectance columns. Default is "spc." based on LUCAS database.
-        srf_bandwidth (float): Assumed full-width half-maximum (FWHM) for each band (in nm). Default is 10.
-        srf_file_path (str): Path to the EnMAP wavelength CSV file within GitHub.
+        lab_data (pd.DataFrame): Lab data with reflectance columns (starting with 'spc.<wavelength>').
+        reflectance_prefix (str): Prefix for reflectance columns.
+        srf_file_path (str): Path to the EnMAP wavelength CSV file.
 
     Returns:
         pd.DataFrame: Convolved data with retained metadata and EnMAP bands.
@@ -76,12 +76,13 @@ def convolve_to_enmap(lab_data, reflectance_prefix="spc.", srf_bandwidth=10, srf
         raise FileNotFoundError(f"EnMAP wavelength file not found at {srf_file_path}")
     enmap_wavelengths = pd.read_csv(srf_file_path)
 
-    # Step 2: Create EnMAP SRFs
+    # Step 2: Create EnMAP SRFs using FWHM
     enmap_srf = {}
     for _, row in enmap_wavelengths.iterrows():
         center = row['Wavelength']
+        fwhm = row['FWHM']  # Retrieve FWHM for the band
         name = f"{row['Name']} - {center:.2f}"  # Include central wavelength in band name
-        band_range = (center - srf_bandwidth / 2, center + srf_bandwidth / 2)
+        band_range = (center - fwhm / 2, center + fwhm / 2)  # Adjust range based on FWHM
         wavelengths = np.linspace(band_range[0], band_range[1], 100)
         response = np.ones_like(wavelengths)  # Flat response
         enmap_srf[name] = (wavelengths, response)
