@@ -15,7 +15,7 @@ setup(
     author='Beth Delaney',
     author_email='beth_delaney@outlook.com',
     description='Python implementation of various soil spectral applications',
-    url='https://github.com/bethdelaney/soil-python.git',
+    url='https://github.com/bethdelaney/soil_python.git',
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
