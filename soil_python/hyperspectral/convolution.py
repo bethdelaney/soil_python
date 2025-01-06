@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import os
 
-def convolve_to_hyperion(lab_data, reflectance_prefix="spc.", srf_bandwidth=10, srf_file_path="hyperspectral/hyperion_wavelengths.csv"):
+def convolve_to_hyperion(lab_data, reflectance_prefix="spc.", srf_bandwidth=10):
     """
     Convolves lab hyperspectral data to Hyperion bands using spectral response functions (SRFs).
     Automatically generates Hyperion SRFs from a provided wavelength file.
@@ -12,11 +12,15 @@ def convolve_to_hyperion(lab_data, reflectance_prefix="spc.", srf_bandwidth=10, 
         lab_data (pd.DataFrame): Lab data with reflectance columns (e.g., starting with 'spc.<wavelength>').
         reflectance_prefix (str): Prefix for reflectance columns. Default is "spc." based on LUCAS database.
         srf_bandwidth (float): Assumed full-width half-maximum (FWHM) for each band (in nm). Default is 10.
-        srf_file_path (str): Path to the Hyperion wavelength CSV file within GitHub.
 
     Returns:
         pd.DataFrame: Convolved data with retained metadata and Hyperion bands.
-    """
+    """    
+    
+    # Automatically determine the SRF file path
+    package_dir = os.path.dirname(__file__)  # Directory of this script
+    srf_file_path = os.path.join(package_dir, "hyperion_wavelengths.csv")
+
     # Step 1: Load Hyperion Wavelengths
     if not os.path.exists(srf_file_path):
         raise FileNotFoundError(f"Hyperion wavelength file not found at {srf_file_path}")
@@ -57,7 +61,7 @@ def convolve_to_hyperion(lab_data, reflectance_prefix="spc.", srf_bandwidth=10, 
 # convolved_data = convolve_to_hyperion(lab_data)
 # convolved_data.to_csv('convolved_lab_data.csv', index=False)
 
-def convolve_to_enmap(lab_data, reflectance_prefix="spc.", srf_file_path="hyperspectral/enmap_wavelengths.csv"):
+def convolve_to_enmap(lab_data, reflectance_prefix="spc."):
     """
     Convolves lab hyperspectral data to EnMAP bands using spectral response functions (SRFs).
     Automatically generates EnMAP SRFs using FWHM from a provided wavelength file.
@@ -66,11 +70,14 @@ def convolve_to_enmap(lab_data, reflectance_prefix="spc.", srf_file_path="hypers
     Parameters:
         lab_data (pd.DataFrame): Lab data with reflectance columns (starting with 'spc.<wavelength>').
         reflectance_prefix (str): Prefix for reflectance columns.
-        srf_file_path (str): Path to the EnMAP wavelength CSV file.
 
     Returns:
         pd.DataFrame: Convolved data with retained metadata and EnMAP bands.
     """
+    # Automatically determine the SRF file path
+    package_dir = os.path.dirname(__file__)  # Directory of this script
+    srf_file_path = os.path.join(package_dir, "enmap_wavelengths.csv")
+
     # Step 1: Load EnMAP Wavelengths
     if not os.path.exists(srf_file_path):
         raise FileNotFoundError(f"EnMAP wavelength file not found at {srf_file_path}")
