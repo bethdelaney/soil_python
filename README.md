@@ -1,4 +1,4 @@
-# soil-python
+# soil_python
 This repository is dedicated to developing and implementing various soil remote sensing analysis packages, with a focus on utilising machine learning and satellite remote sensing data. The goal is to provide tools and algorithms that enhance soil property mapping estimation and other agricultural applications.
 
 The repository will evolve over time, incorporating new methods and analysis techniques as they are developed or adapted. Current implementations are as follows:-
