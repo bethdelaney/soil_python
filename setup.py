@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='soil-python',
+    name='soil_python',
     version='0.9',
     packages=find_packages(),
     install_requires=[
