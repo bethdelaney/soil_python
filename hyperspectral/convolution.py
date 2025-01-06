@@ -47,7 +47,7 @@ def convolve_to_hyperion(lab_data, hyperion_srf, reflectance_prefix="spc."):
     wavelengths = np.array([float(col.replace(reflectance_prefix, "")) for col in reflectance_columns])
     reflectances = lab_data[reflectance_columns].values
 
-    # Initialize dictionary for convolved data
+    # Initialise dictionary for convolved data
     convolved_data = {}
 
     for band, (band_wavelengths, band_responses) in hyperion_srf.items():
