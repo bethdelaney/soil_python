@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='soil-python',
-    version='0.7',
+    version='0.9',
     packages=find_packages(),
     install_requires=[
         'numpy',
