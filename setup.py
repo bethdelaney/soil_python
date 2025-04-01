@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='soil_python',
-    version='0.91',
+    version='1.0',
     packages=find_packages(),
     include_package_data=True,
     install_requires=[
@@ -11,7 +11,9 @@ setup(
         'scipy',
         'scikit-learn',
         'rasterio',
-        'matplotlib'
+        'matplotlib',
+        'os',
+        
     ],
     author='Beth Delaney',
     author_email='beth_delaney@outlook.com',
