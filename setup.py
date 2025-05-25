@@ -12,8 +12,6 @@ setup(
         'scikit-learn',
         'rasterio',
         'matplotlib',
-        'os',
-        
     ],
     author='Beth Delaney',
     author_email='beth_delaney@outlook.com',
