@@ -1,1 +1,1 @@
-from .convolution import convolve_to_hyperion, convolve_to_enmap
+from .convolution import convolve_to_hyperion, convolve_to_enmap, convolve_to_landsatnext
