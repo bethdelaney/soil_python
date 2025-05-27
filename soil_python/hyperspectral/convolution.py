@@ -191,7 +191,7 @@ def convolve_to_s2(lab_data, reflectance_prefix="spc."):
 
     # Step 2: Create EnMAP SRFs using FWHM
     s2_srf = {}
-    for _, row in landsatnext_wavelengths.iterrows():
+    for _, row in s2_wavelengths.iterrows():
         center = row['Wavelength']
         fwhm = row['FWHM']  # Retrieve FWHM for the band
         name = f"{row['Name']} - {center:.2f}"  # Include central wavelength in band name
