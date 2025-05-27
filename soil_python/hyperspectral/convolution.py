@@ -186,7 +186,7 @@ def convolve_to_s2(lab_data, reflectance_prefix="spc."):
 
     # Step 1: Load EnMAP Wavelengths
     if not os.path.exists(srf_file_path):
-        raise FileNotFoundError(f"Landsat Next wavelength file not found at {srf_file_path}")
+        raise FileNotFoundError(f"S2 wavelength file not found at {srf_file_path}")
     s2_wavelengths = pd.read_csv(srf_file_path)
 
     # Step 2: Create EnMAP SRFs using FWHM
