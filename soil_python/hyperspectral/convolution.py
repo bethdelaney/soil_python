@@ -158,7 +158,7 @@ def convolve_to_landsatnext(lab_data, reflectance_prefix="spc."):
 
     # Step 5: Perform Convolution
     convolved_data = {}
-    for band, (band_wavelengths, band_responses) in enmap_srf.items():
+    for band, (band_wavelengths, band_responses) in landsat_srf.items():
         interpolated_srf = np.interp(wavelengths, band_wavelengths, band_responses, left=0, right=0)
         band_values = np.sum(reflectances * interpolated_srf, axis=1) / np.sum(interpolated_srf)
         convolved_data[band] = band_values
