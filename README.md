@@ -10,7 +10,7 @@ The Puchwein algorithm (Puchwein 1988) is implemented to select representative s
 
 ## Hyperspectral:
 
-Convolution from laboratory hyperspectral data to various satellite sensor central wavelengths. Currently Hyperion, EnMAP and Landsat Next are applied.
+Convolution from laboratory hyperspectral data to various satellite sensor central wavelengths. Currently Hyperion, EnMAP, Landsat 8, Landsat Next, and Sentinel-2 are applied.
 
 ## Pretreatments:
 
