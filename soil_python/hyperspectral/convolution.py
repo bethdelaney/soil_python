@@ -131,12 +131,12 @@ def convolve_to_landsatnext(lab_data, reflectance_prefix="spc."):
     package_dir = os.path.dirname(__file__)  # Directory of this script
     srf_file_path = os.path.join(package_dir, "landsatnext_wavelengths.csv")
 
-    # Step 1: Load EnMAP Wavelengths
+    # Step 1: Load Landsat Next Wavelengths
     if not os.path.exists(srf_file_path):
         raise FileNotFoundError(f"Landsat Next wavelength file not found at {srf_file_path}")
     landsatnext_wavelengths = pd.read_csv(srf_file_path)
 
-    # Step 2: Create EnMAP SRFs using FWHM
+    # Step 2: Create Landsat Next SRFs using FWHM
     landsat_srf = {}
     for _, row in landsatnext_wavelengths.iterrows():
         center = row['Wavelength']
@@ -212,6 +212,60 @@ def convolve_to_s2(lab_data, reflectance_prefix="spc."):
     # Step 5: Perform Convolution
     convolved_data = {}
     for band, (band_wavelengths, band_responses) in s2_srf.items():
+        interpolated_srf = np.interp(wavelengths, band_wavelengths, band_responses, left=0, right=0)
+        band_values = np.sum(reflectances * interpolated_srf, axis=1) / np.sum(interpolated_srf)
+        convolved_data[band] = band_values
+
+    # Step 6: Combine Results
+    convolved_df = pd.concat([metadata, pd.DataFrame(convolved_data)], axis=1)
+    return convolved_df
+
+def convolve_to_landsat8(lab_data, reflectance_prefix="spc.", srf_bandwidth=10):
+    """
+    Convolves lab hyperspectral data to Landsat 8 bands using spectral response functions (SRFs).
+    Automatically generates Landsat 8 SRFs from a provided wavelength file.
+    Reflectance data MUST be in columns with prefix so that they can be recognised. E.g., reflectance_prefix="spc." for spc.400, spc.401...
+    
+    Parameters:
+        lab_data (pd.DataFrame): Lab data with reflectance columns (e.g., starting with 'spc.<wavelength>').
+        reflectance_prefix (str): Prefix for reflectance columns. Default is "spc." based on LUCAS database.
+        srf_bandwidth (float): Assumed full-width half-maximum (FWHM) for each band (in nm). Default is 10.
+
+    Returns:
+        pd.DataFrame: Convolved data with retained metadata and Landsat 8 bands.
+    """    
+    
+    # Automatically determine the SRF file path
+    package_dir = os.path.dirname(__file__)  # Directory of this script
+    srf_file_path = os.path.join(package_dir, "l8_wavelengths.csv")
+
+    # Step 1: Load Landsat 8 Wavelengths
+    if not os.path.exists(srf_file_path):
+        raise FileNotFoundError(f"Landsat 8 wavelength file not found at {srf_file_path}")
+    l8_wavelengths = pd.read_csv(srf_file_path)
+
+    # Step 2: Create Landsat 8 SRFs
+    l8_srf = {}
+    for _, row in l8_wavelengths.iterrows():
+        center = row['Wavelength']
+        name = f"{row['Name']} - {center:.2f}"  # Include central wavelength in band name
+        band_range = (center - srf_bandwidth / 2, center + srf_bandwidth / 2)
+        wavelengths = np.linspace(band_range[0], band_range[1], 100)
+        response = np.ones_like(wavelengths)  # Flat response
+        l8_srf[name] = (wavelengths, response)
+
+    # Step 3: Retain Metadata
+    reflectance_columns = [col for col in lab_data.columns if col.startswith(reflectance_prefix)]
+    metadata_columns = [col for col in lab_data.columns if col not in reflectance_columns]
+    metadata = lab_data[metadata_columns]
+
+    # Step 4: Extract Wavelengths and Reflectance Data
+    wavelengths = np.array([float(col.replace(reflectance_prefix, "")) for col in reflectance_columns])
+    reflectances = lab_data[reflectance_columns].values
+
+    # Step 5: Perform Convolution
+    convolved_data = {}
+    for band, (band_wavelengths, band_responses) in l8_srf.items():
         interpolated_srf = np.interp(wavelengths, band_wavelengths, band_responses, left=0, right=0)
         band_values = np.sum(reflectances * interpolated_srf, axis=1) / np.sum(interpolated_srf)
         convolved_data[band] = band_values
