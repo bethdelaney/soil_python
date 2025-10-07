@@ -1,2 +1,2 @@
 from .convolution import convolve_to_hyperion, convolve_to_enmap, convolve_to_landsatnext, convolve_to_s2, convolve_to_landsat8
-from .gaussian_convolution import convolve_to_enmap, convolve_to_landsatnext, convolve_to_landsat8
+from .gaussian_convolution import gaus_convolve_to_enmap, gaus_convolve_to_landsatnext, gaus_convolve_to_landsat8
