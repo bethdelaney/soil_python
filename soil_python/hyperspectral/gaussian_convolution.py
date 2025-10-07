@@ -4,7 +4,7 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
-def convolve_to_landsat8(
+def gaus_convolve_to_landsat8(
     lab_data: pd.DataFrame,
     reflectance_prefix: str = "spc.",
     center_csv_path: Optional[str] = None,         # leave None to auto-find in same folder as this file
@@ -127,7 +127,7 @@ def convolve_to_landsat8(
 #     fallback_fwhm=10.0                   # used only if FWHM missing for a band
 # )
 
-def convolve_to_landsatnext(
+def gaus_convolve_to_landsatnext(
     lab_data: pd.DataFrame,
     reflectance_prefix: str = "spc.",
     center_csv_path: Optional[str] = None,          # leave None to auto-find in same folder as this file
@@ -248,7 +248,7 @@ def convolve_to_landsatnext(
 #     fallback_fwhm=10.0
 # )
 
-def convolve_to_enmap(
+def gaus_convolve_to_enmap(
     lab_data: pd.DataFrame,
     reflectance_prefix: str = "spc.",
     center_csv_path: Optional[str] = None,          # leave None to auto-find in same folder as this file
